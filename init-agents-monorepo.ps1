@@ -1,20 +1,19 @@
-# init-agents.ps1 - Initialize .agents folder (minimal version)
-# Usage: irm https://raw.githubusercontent.com/your-username/project-scaffold/main/init-agents.ps1 | iex
+# init-agents-monorepo.ps1 - Initialize AI Workspace (Monorepo)
+# Usage: irm https://raw.githubusercontent.com/your-username/project-scaffold/main/init-agents-monorepo.ps1 | iex
 
 # Colors
 $GREEN = "`e[0;32m"
 $BLUE = "`e[0;34m"
+$YELLOW = "`e[1;33m"
 $NC = "`e[0m"
 
-Write-Host "${BLUE}🚀 Initializing .agents/ structure...${NC}`n"
+Write-Host "${BLUE}🚀 Initializing AI Agents Workspace (Monorepo)...${NC}`n"
 
-# Create .agents folder structure (minimal)
-Write-Host "📁 Creating .agents/ folder..."
+# 1. Create .agents folder structure
+Write-Host "📁 Creating .agents/ folder structure..."
 $folders = @(
     ".agents",
-    ".agents/contracts",
-    ".agents/specs",
-    ".agents/patterns"
+    ".agents/contracts"
 )
 
 foreach ($folder in $folders) {
@@ -23,135 +22,212 @@ foreach ($folder in $folders) {
     }
 }
 
-# Create CLAUDE.md
+# 2. Create CLAUDE.md at ROOT
 Write-Host "📝 Creating CLAUDE.md..."
 $claudeMd = @"
 # AI Constitution for [PROJECT_NAME]
 
-## Read First
-1. Read [AGENTS.md](AGENTS.md)
-2. Read [active.md](active.md)
-3. Review [contracts/api-contract.md](contracts/api-contract.md)
+## 1. Project Info
+- **Name:** [PROJECT_NAME]
+- **Type:** Monorepo (FE + BE together)
+- **Frontend:** [e.g., React Native]
+- **Backend:** [e.g., NestJS]
+- **Team:** You + AI agents
 
-## Project Context
-**Project:** [PROJECT_NAME]
-**Architecture:** [FULLSTACK / BACKEND / FRONTEND]
-**Team:** [YOUR_NAME]
-**Frameworks:** [YOUR_FRAMEWORKS]
-**Languages:** [YOUR_LANGUAGES]
+## 2. Read These Files First
+1. .agents/SKILL.md (boot instructions + project context)
+2. .agents/active.md (what to do)
+3. .agents/contracts/api-contract.md (API rules)
 
-## Your Responsibilities
-DO:
-- Implement ตาม spec เท่านั้น
-- Read contracts ก่อนเปลี่ยน API
-- Update active.md เมื่อทำเสร็จ
-- Ask when unclear
+## 3. DO ✅
+- Follow .agents/contracts/api-contract.md exactly
+- Update .agents/active.md when done
+- Keep it clean (remove old tasks to save tokens)
+- Ask if unclear
 
-DON'T:
-- สร้าง field/endpoint เอง
-- สมมติ backend behavior
-- เปลี่ยน spec คนเดียว
+## 4. DON'T ❌
+- Create API fields on your own
+- Assume what API returns
+- Deploy without asking
+- Mix FE and BE folders
 
-## Risk Level
-- **R0 (Stop & Ask):** Deploy, DB migration, git push main, delete data
-- **R1 (Do & Tell):** Change API contract, architecture, dependencies
-- **R2 (Just Do):** Feature, bug fix, refactor, UI change
-
-## Important
-1. Never assume API shape - check contracts/api-contract.md
-2. Always reference specs/ before architecture changes
-3. Document decisions in decisions/
-4. Keep patterns/ updated
-5. Update active.md with progress
+## 5. Risk Level
+- **R0 (Ask First):** Deploy, DB changes, git push main
+- **R1 (Tell After):** Change API contract
+- **R2 (Just Do):** Features, bug fixes, refactor
 
 ---
-**Version:** 1.0
-**Created:** [DATE]
+**Created:** $(Get-Date -Format 'yyyy-MM-dd')
 **Maintained By:** [YOUR_NAME]
 "@
-$claudeMd | Out-File -FilePath ".agents/CLAUDE.md" -Encoding UTF8 -Force
+$claudeMd | Out-File -FilePath "CLAUDE.md" -Encoding UTF8 -Force
 
-# Create AGENTS.md
-Write-Host "📝 Creating AGENTS.md..."
-$agentsMd = @"
-# AI Boot Instructions
+# 3. Create SKILL.md (AGENTS + SKILL combined)
+Write-Host "📝 Creating .agents/SKILL.md..."
+$skillMd = @"
+# 🚀 Boot Instructions + Project Context
+---
 
-Read completely before working.
+## Project Overview
 
-## Boot Sequence
-1. Read [CLAUDE.md](CLAUDE.md) - Constraints
-2. Read [active.md](active.md) - Current work
-3. Check [contracts/api-contract.md](contracts/api-contract.md) - API shape
-4. Review [specs/](specs/) - Architecture
-5. Browse [patterns/](patterns/) - How we do things
+### Architecture
+- **Frontend:** Located in \`/frontend\` folder
+- **Backend:** Located in \`/backend\` folder
+- **Shared:** Everything in \`.agents/\` is shared
+
+### Tech Stack
+- Frontend: [e.g., React Native + TypeScript]
+- Backend: [e.g., NestJS + PostgreSQL]
+- Database: [e.g., PostgreSQL]
+
+### Key Folders
+\`\`\`
+project/
+├── frontend/          ← FE code here
+├── backend/           ← BE code here
+├── CLAUDE.md          ← AI rules
+└── .agents/           ← Shared context
+    ├── SKILL.md       ← This file
+    ├── active.md      ← Current work
+    └── contracts/
+        └── api-contract.md  ← API truth
+\`\`\`
+
+---
 
 ## What to Do
-- Implement features per spec
-- Check contracts before API changes
-- Update active.md with progress
-- Ask for clarification when unclear
 
-## What NOT to Do
-- Assume API shape
-- Skip documentation
-- Modify specs without discussion
-- Ignore risk levels from CLAUDE.md
+### 1. Check active.md
+- See current task
+- See blockers
+- See what's next
+
+### 2. Check contracts/api-contract.md
+- **Never assume** API shape
+- Always follow the contract
+- If API doesn't match → STOP and ask
+
+### 3. Follow Patterns
+- Keep code style consistent
+- Follow naming conventions
+- Check if similar code exists
+
+### 4. Update active.md
+- When you start → mark as \`in_progress\`
+- When you finish → mark as \`done\`
+- Keep session history (last 3 sessions only!)
+- Note blockers if stuck
+
+---
+
+## Common Tasks
+
+### Adding a New API
+1. Check contracts/api-contract.md
+2. Create contract FIRST (before coding)
+3. Implement in backend
+4. Test with frontend
+5. Update active.md
+
+### Fixing a Bug
+1. Understand the issue (check active.md)
+2. Check if it's API-related (check contracts/)
+3. Fix the code
+4. Test thoroughly
+5. Update active.md with "done"
+
+### Creating a Feature
+1. Read CLAUDE.md for rules
+2. Check contracts/ for API shape
+3. Implement step by step
+4. Test with both FE and BE
+5. Update active.md
+
+---
+
+## Important Rules
+
+### Rule 1: Contract is Law
+- If code doesn't match contract → change code, not contract
+- Update contract BEFORE coding
+- Both FE and BE must follow same contract
+
+### Rule 2: Update Daily
+- Every session → update active.md
+- Every task done → mark as done
+- Every blocker → document it
+
+---
+
+## Getting Help
+
+| Question | Answer |
+|----------|--------|
+| "What's the API shape?" | contracts/api-contract.md |
+| "What should I do?" | active.md |
+| "Why this way?" | CLAUDE.md |
+| "How does this work?" | This file (SKILL.md) |
+
+---
+
+## Next Steps
+1. Read CLAUDE.md
+2. Read active.md
+3. Check contracts/api-contract.md
+4. Start working!
 
 ---
 **Version:** 1.0
+**Updated:** $(Get-Date -Format 'yyyy-MM-dd')
 "@
-$agentsMd | Out-File -FilePath ".agents/AGENTS.md" -Encoding UTF8 -Force
+$skillMd | Out-File -FilePath ".agents/SKILL.md" -Encoding UTF8 -Force
 
-# Create active.md
-Write-Host "📝 Creating active.md..."
+# 4. Create active.md
+Write-Host "📝 Creating .agents/active.md..."
 $activeMd = @"
-# Current Development Status
+# 📍 Active Status
 
-## Current Task
-- **Task:** [WHAT_ARE_YOU_DOING]
-- **Status:** planned / in_progress / blocked / completed
-- **Started:** [DATE]
+## 🎯 Right Now
+- **Task:** [What I'm doing]
+- **Status:** planned / in_progress / blocked / done
 
-## What's Done
-- [ ] Task 1
-- [ ] Task 2
+## ✅ Done
+- [x] Example task 1
+- [ ] ...
 
-## What's Next
+## 🚀 Next (For Next Agent)
 - [ ] Next task 1
 - [ ] Next task 2
 
-## Key Context
-(Important context for next agent)
+## 🚧 Blockers
+- [None / description of problem]
 
-## Session History
+## 📝 Notes for Next Agent
+[Important info to pass on]
 
-### Session 1 - [DATE]
-- Completed: [WHAT_YOU_DID]
-- Blocker: [IF_ANY]
-- Next: [WHAT_TO_DO]
+## 🕒 Last 3 Sessions (Keep recent only!)
+### $(Get-Date -Format 'yyyy-MM-dd') - [Agent Name]
+- **Did:** [What was completed]
+- **Next:** [What to do next]
 
 ---
-**Last Updated:** [DATE]
-**Next Agent:** [WHO]
+**Last Updated:** $(Get-Date -Format 'yyyy-MM-dd') | **Next Agent:** [Name]
 "@
 $activeMd | Out-File -FilePath ".agents/active.md" -Encoding UTF8 -Force
 
-# Create contracts/api-contract.md
-Write-Host "📝 Creating contracts/api-contract.md..."
+# 5. Create contracts/api-contract.md
+Write-Host "📝 Creating .agents/contracts/api-contract.md..."
 $apiContractMd = @"
-# API Contract
+# 📜 API Contract (Single Source of Truth)
 
-**Status:** IN_PROGRESS
-**Last Updated:** [DATE]
-**Maintained By:** [NAME]
+**Rule:** This is the TRUTH. Both FE & BE must follow it exactly.
 
 ## Current APIs
 
-(Will be filled when building features)
-
-### Template
+### Example: Login
 \`\`\`
-POST /auth/login
+POST /api/auth/login
+
 Request:
 {
   "email": "string",
@@ -162,84 +238,54 @@ Response (200):
 {
   "token": "string",
   "user": {
-    "id": "string",
+    "id": "number",
+    "name": "string",
     "email": "string"
   }
 }
 
 Errors:
-- 400: Invalid credentials
+- 400: Invalid email/password
+- 422: Validation error
 - 500: Server error
 \`\`\`
 
 ---
-**IMPORTANT:** This is the single source of truth for API shape.
+
+### [Add more APIs here as needed]
+
+---
+
+## Rules
+✅ All APIs must be documented here  
+✅ Update BEFORE coding  
+✅ Both FE and BE follow this exactly  
+❌ Never skip documentation  
+
+**Important:** Update this file FIRST, code SECOND
 "@
 $apiContractMd | Out-File -FilePath ".agents/contracts/api-contract.md" -Encoding UTF8 -Force
 
-# Create contracts/README.md
-Write-Host "📝 Creating contracts/README.md..."
-$contractsReadme = @"
-# System Contracts
-
-**api-contract.md** - API endpoints, request/response types, error codes
-
-Rules:
-- All APIs MUST be documented here
-- Update BEFORE implementing
-- All teams reference this
-"@
-$contractsReadme | Out-File -FilePath ".agents/contracts/README.md" -Encoding UTF8 -Force
-
-# Create specs/README.md
-Write-Host "📝 Creating specs/README.md..."
-$specsReadme = @"
-# Technical Specifications
-
-Architecture and design documents.
-
-Files:
-- architecture.md - System design
-- database.md - Data model
-- [feature].md - Feature specs
-"@
-$specsReadme | Out-File -FilePath ".agents/specs/README.md" -Encoding UTF8 -Force
-
-# Create patterns/README.md
-Write-Host "📝 Creating patterns/README.md..."
-$patternsReadme = @"
-# Established Patterns
-
-Record patterns you discover and reuse.
-
-Files:
-- naming-conventions.md
-- error-handling.md
-- testing.md
-- api-patterns.md
-"@
-$patternsReadme | Out-File -FilePath ".agents/patterns/README.md" -Encoding UTF8 -Force
-
-# Try to add to git
+# 6. Try to add to git
 $isGitRepo = git rev-parse --git-dir 2>$null
 if ($LASTEXITCODE -eq 0) {
     Write-Host "🔧 Adding to git..."
-    git add .agents/ 2>$null
-    git commit -m "Initialize .agents/ structure" 2>$null
+    git add CLAUDE.md .agents/ 2>$null
+    git commit -m "chore: Initialize AI Agents workspace (Monorepo)" 2>$null
 }
 
 Write-Host "`n${GREEN}✅ Setup complete!${NC}`n"
-Write-Host "📋 Created:"
-Write-Host "   ✓ .agents/CLAUDE.md (AI constitution)"
-Write-Host "   ✓ .agents/AGENTS.md (Boot instructions)"
-Write-Host "   ✓ .agents/active.md (Current work + history)"
-Write-Host "   ✓ .agents/contracts/api-contract.md"
-Write-Host "   ✓ .agents/specs/"
-Write-Host "   ✓ .agents/patterns/"
+Write-Host "📋 Files Created:"
+Write-Host "  ${YELLOW}./CLAUDE.md${NC}                    <-- Rules"
+Write-Host "  ./.agents/${YELLOW}SKILL.md${NC}              <-- Boot + Context"
+Write-Host "  ./.agents/${YELLOW}active.md${NC}              <-- Current Work"
+Write-Host "  ./.agents/contracts/${YELLOW}api-contract.md${NC} <-- API Truth"
 Write-Host ""
-Write-Host "📝 TODO:"
-Write-Host "   1. Update placeholders: [PROJECT_NAME], [DATE], etc"
-Write-Host "   2. Fill active.md with current work"
-Write-Host "   3. Add APIs to contracts/api-contract.md"
+Write-Host "📝 ${YELLOW}Next Steps:${NC}"
+Write-Host "  1. Update [PROJECT_NAME] in CLAUDE.md"
+Write-Host "  2. Update [YOUR_NAME] in CLAUDE.md"
+Write-Host "  3. Fill .agents/SKILL.md with your tech details"
+Write-Host "  4. Add your first task to .agents/active.md"
+Write-Host "  5. Add your APIs to .agents/contracts/api-contract.md"
 Write-Host ""
-Write-Host "${GREEN}Ready for any AI agent! 🚀${NC}"
+Write-Host "${GREEN}Ready for AI Collaboration! 🚀${NC}"
